@@ -2,7 +2,7 @@ import axios from "axios";
 
 // const accessToken = localStorage.getItem("accessToken");
 export const api = axios.create({
-    baseURL: "http://54.209.82.1:5000",//"http://localhost:5000",
+    baseURL: "http://52.55.222.201:5000",//"http://localhost:5000",
 });
 
 // if(accessToken){
