@@ -1,16 +1,32 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import AuthContext from "../../../contexts/authContext"
 import { useNavigate, Link } from "react-router-dom";
 import Popup from "../../Custom/Popup";
+import { api } from "../../../api/api";
+import moment from 'moment/moment';
+import SignPopup from "../../Custom/SignPopup";
 
 const Dashboard = () => {
     const authCtx = useContext(AuthContext);
     const navigate = useNavigate();
     const [importedData, setImportedData] = useState(null);
+    const [documentList, setDocumentList] = useState(null);
+    const [modifiedFileData, setModifiedFileData] = useState(null);
+    const [modifiedSignData, setModifiedSignData] = useState(null);
 
     const handleLogout = () => {
         authCtx.logout();
     }
+
+    const getDocumentList = async () => {
+        const { data } = await api.get("/api/get-document-list");
+        console.log("documentList", data);
+        setDocumentList(data);
+    }
+
+    useEffect(() => {
+        getDocumentList();
+    }, [modifiedFileData, importedData, modifiedSignData]);
 
     return (
         <div>
@@ -45,8 +61,49 @@ const Dashboard = () => {
                                                                                         className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
                                                                                         onClick={() => { }} > Upload document for e-sign </button> */}
                                                                                     <div className="col-lg-2 addbtn">
-                                                                                        <Popup importedData={importedData} setImportedData={setImportedData} />
+                                                                                        <Popup
+                                                                                            importedData={importedData}
+                                                                                            setImportedData={setImportedData}
+                                                                                            modifiedFileData={modifiedFileData}
+                                                                                            setModifiedFileData={setModifiedFileData}
+                                                                                            modifiedSignData={modifiedSignData}
+                                                                                            setModifiedSignData={setModifiedSignData} />
                                                                                     </div>
+                                                                                </div>
+
+                                                                                <div class="text-center pt-1 mb-5 pb-1">
+                                                                                    {
+                                                                                        documentList?.data?.map((data, i) => {
+                                                                                            return (
+                                                                                                <li key={i} >
+                                                                                                    <span>{data.fileName}</span><br />
+                                                                                                    <span>To: {data.userName}</span><br />
+                                                                                                    <span>Last Change: {moment(data.updatedAt).format("LL")}</span><br />
+                                                                                                    <span>Status: {data.status}</span><br />
+                                                                                                    {
+                                                                                                        data.status == "Completed" ? (
+                                                                                                            <>
+                                                                                                                <a href={data.filePath[0]} download target="_blank" className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" >
+                                                                                                                    <span>Download</span>
+                                                                                                                </a><br /><br /><br />
+                                                                                                            </>
+                                                                                                        ) : null
+                                                                                                    }
+                                                                                                    {
+                                                                                                        data.status == "Incomplete" ? (
+                                                                                                            <><SignPopup
+                                                                                                                documentId={data._id}
+                                                                                                                modifiedFileData={modifiedFileData}
+                                                                                                                setModifiedFileData={setModifiedFileData}
+                                                                                                                modifiedSignData={modifiedSignData}
+                                                                                                                setModifiedSignData={setModifiedSignData}
+                                                                                                            /><br /><br /><br /></>
+                                                                                                        ) : null
+                                                                                                    }
+                                                                                                </li>
+                                                                                            )
+                                                                                        })
+                                                                                    }
                                                                                 </div>
 
                                                                             </div>

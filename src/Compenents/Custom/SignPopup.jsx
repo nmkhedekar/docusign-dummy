@@ -3,12 +3,8 @@ import { Modal, Button } from 'react-bootstrap'
 import { useState } from "react";
 import { api } from "../../api/api";
 
-const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFileData, modifiedSignData, setModifiedSignData }) => {
-
-    const [showPopup, setShowPopup] = React.useState(false)
-    const [selectedFileName, setSelectedFileName] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [loader, setLoader] = useState(false);
+const SignPopup = ({ documentId, modifiedFileData, setModifiedFileData, modifiedSignData, setModifiedSignData }) => {
+    const [showPopup, setShowPopup] = React.useState(false);
     const [showSecondPopup, setShowSecondPopup] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -16,14 +12,7 @@ const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFil
     const [uploadSignaturePopup, setUploadSignaturePopup] = useState(false);
     const [signatureImg, setSignatureImg] = useState(null);
 
-    const filenameHandler = (e) => {
-        setSelectedFileName(e?.target?.files[0]?.name);
-    }
-
     const popupHandler = () => {
-        setSelectedFileName("");
-        setSelectedFile(null);
-        setImportedData(null);
         setModifiedFileData(null);
         setShowSecondPopup(false);
         setName("");
@@ -35,29 +24,9 @@ const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFil
         setShowPopup(!showPopup);
     }
 
-    const handleSubmit = async () => {
-        if (selectedFile) {
-            setLoader(true);
-            const formData = new FormData();
-            Object.values(selectedFile).forEach(file => {
-                console.log("pdfFile", file);
-                formData.append("multiFile", file);
-            });
-            const { data } = await api.post(`/api/upload-document`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            console.log("pdfData", data);
-            setImportedData(data);
-            // setShowPopup(false);
-            setLoader(false);
-        }
-    }
-
     const modifyFileHandler = async () => {
         const { data } = await api.patch(`/api/modify-document`, {
-            documentId: importedData?.data?._id,
+            documentId,
             name,
             email,
             signature
@@ -74,7 +43,7 @@ const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFil
                 formData.append("multiFile", file);
                 formData.append("name", name);
                 formData.append("email", email);
-                formData.append("documentId", importedData?.data?._id);
+                formData.append("documentId", documentId);
             });
             const { data } = await api.post(`/api/upload-signature`, formData, {
                 headers: {
@@ -88,9 +57,8 @@ const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFil
 
     return (
         <>
-
             <Button variant="success" onClick={popupHandler}>
-                Upload document
+                Sign
             </Button>
 
             <Modal show={showPopup}>
@@ -101,36 +69,18 @@ const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFil
                     Only PDF format accepted
                 </Modal.Body>
 
-                <input type="file" name="myfile" style={{ cursor: "pointer" }} onChange={(e) => {
-                    filenameHandler(e);
-                    setSelectedFile(e.target.files);
-                }} />
-
-                <Button onClick={handleSubmit}>
-                    Upload
+                <Button onClick={() => {
+                    setShowSecondPopup(true);
+                    setShowPopup(false);
+                }}>
+                    Custom Signature
                 </Button>
-
-                <span>{importedData ? "File uploaded successfully" : ""}</span>
-
-                {
-                    importedData ? (
-                        <>
-                            <Button onClick={() => {
-                                setShowSecondPopup(true);
-                                setShowPopup(false);
-                            }}>
-                                Custom Signature
-                            </Button>
-                            <Button onClick={() => {
-                                setUploadSignaturePopup(true);
-                                setShowPopup(false);
-                            }}>
-                                Upload Signature
-                            </Button>
-                        </>
-                    ) : null
-                }
-
+                <Button onClick={() => {
+                    setUploadSignaturePopup(true);
+                    setShowPopup(false);
+                }}>
+                    Upload Signature
+                </Button>
             </Modal>
 
             <Modal show={showSecondPopup}>
@@ -201,4 +151,4 @@ const Popup = ({ importedData, setImportedData, modifiedFileData, setModifiedFil
     )
 }
 
-export default Popup;
+export default SignPopup;
