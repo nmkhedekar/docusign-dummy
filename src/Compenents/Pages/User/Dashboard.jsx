@@ -44,7 +44,7 @@ const Dashboard = () => {
                                                         <div class="">
                                                             <div class="card rounded-3 text-black">
                                                                 <div class="row g-0">
-                                                                    <div class="col-lg-6">
+                                                                    <div class="col-lg-12">
                                                                         <div class="card-body p-md-5 mx-md-4">
 
                                                                             <div class="text-center">
@@ -60,7 +60,7 @@ const Dashboard = () => {
                                                                                     {/* <button
                                                                                         className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
                                                                                         onClick={() => { }} > Upload document for e-sign </button> */}
-                                                                                    <div className="col-lg-2 addbtn">
+                                                                                    <div className="col-lg-12 addbtn">
                                                                                         <Popup
                                                                                             importedData={importedData}
                                                                                             setImportedData={setImportedData}
@@ -71,46 +71,54 @@ const Dashboard = () => {
                                                                                     </div>
                                                                                 </div>
 
-                                                                                <div class="text-center pt-1 mb-5 pb-1">
-                                                                                    {
-                                                                                        documentList?.data?.map((data, i) => {
-                                                                                            return (
-                                                                                                <li key={i} >
-                                                                                                    <span>{data.fileName}</span><br />
-                                                                                                    <span>To: {data.userName}</span><br />
-                                                                                                    <span>Last Change: {moment(data.updatedAt).format("LL")}</span><br />
-                                                                                                    <span>Status: {data.status}</span><br />
-                                                                                                    {
-                                                                                                        data.status == "Completed" ? (
-                                                                                                            <>
-                                                                                                                <a href={data.filePath[0]} download target="_blank" className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" >
-                                                                                                                    <span>Download</span>
-                                                                                                                </a><br /><br /><br />
-                                                                                                            </>
-                                                                                                        ) : null
-                                                                                                    }
-                                                                                                    {
-                                                                                                        data.status == "Incomplete" ? (
-                                                                                                            <><SignPopup
-                                                                                                                documentId={data._id}
-                                                                                                                modifiedFileData={modifiedFileData}
-                                                                                                                setModifiedFileData={setModifiedFileData}
-                                                                                                                modifiedSignData={modifiedSignData}
-                                                                                                                setModifiedSignData={setModifiedSignData}
-                                                                                                            /><br /><br /><br /></>
-                                                                                                        ) : null
-                                                                                                    }
-                                                                                                </li>
-                                                                                            )
-                                                                                        })
-                                                                                    }
+                                                                                <div class="auto-height text-center pt-1 mb-5 pb-1">
+                                                                                    <table id="customers" class="table">
+                                                                                        <tr>
+                                                                                            <th><strong>Subject</strong></th>                                                                                            
+                                                                                            <th><strong>Last Change</strong></th>
+                                                                                            <th><strong>Status</strong></th>
+                                                                                            <th><strong>Action</strong></th>
+                                                                                        </tr>
+                                                                                        {
+                                                                                            documentList?.data?.map((data, i) => {
+                                                                                                return (
+                                                                                                    <tr>
+                                                                                                        <td>{data.fileName}<br />To: {data.userName}</td>                                                                                                        
+                                                                                                        <td>{moment(data.updatedAt).format("LL")}</td>
+                                                                                                        <td>{data.status}</td>
+                                                                                                        <td>{
+                                                                                                            data.status == "Completed" ? (
+                                                                                                                <>
+                                                                                                                    <a href={data.filePath[0]} download target="_blank" className="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" >
+                                                                                                                        <span>Download</span>
+                                                                                                                    </a>
+                                                                                                                </>
+                                                                                                            ) : null
+                                                                                                        }
+                                                                                                            {
+                                                                                                                data.status == "Incomplete" ? (
+                                                                                                                    <><SignPopup
+                                                                                                                        documentId={data._id}
+                                                                                                                        modifiedFileData={modifiedFileData}
+                                                                                                                        setModifiedFileData={setModifiedFileData}
+                                                                                                                        modifiedSignData={modifiedSignData}
+                                                                                                                        setModifiedSignData={setModifiedSignData}
+                                                                                                                    /></>
+                                                                                                                ) : null
+                                                                                                            }
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                )
+                                                                                            })
+                                                                                        }
+                                                                                    </table>
                                                                                 </div>
 
                                                                             </div>
 
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                                                                    {/* <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
                                                                         <div class="text-white px-3 py-4 p-md-5 mx-md-4">
                                                                             <h4 class="mb-4">We are more than just a company</h4>
                                                                             <p class="small mb-0">Our mission is to empower organizations to make confident,
@@ -119,7 +127,7 @@ const Dashboard = () => {
                                                                                 and brands.
                                                                             </p>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> */}
                                                                 </div>
                                                             </div>
                                                         </div>
